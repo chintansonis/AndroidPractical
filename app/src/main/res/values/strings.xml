@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ChintanAndroidPractical</string>
+    <string name="app_name">AndroidPractical</string>
+    <string name="explore">Explore Clothing</string>
+    <string name="favourite">Favourites</string>
+    <string name="no_products_found">No products found!!</string>
+    <string name="no_favourites_found">No favourites added!!</string>
+    <string name="dummy_product">Dummy product</string>
 </resources>
