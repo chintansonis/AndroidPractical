@@ -20,6 +20,18 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation" : "$projectDir/schemas".toString()]
+            }
+        }
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["dagger.hilt.disableModulesHaveInstallInCheck"] = "true"
+            }
+        }
     }
 
     buildTypes {
@@ -49,6 +61,12 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=kotlin.time.ExperimentalTime"]
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"]
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=androidx.compose.animation.ExperimentalAnimationApi"]
+        kotlinOptions.freeCompilerArgs += ["-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"]
+    }
 }
 
 dependencies {
@@ -57,7 +75,12 @@ dependencies {
     // Lifecycle libraries
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
+    //need to remove
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation 'androidx.navigation:navigation-runtime-ktx:2.4.1'
 
     // Compose libraries
     implementation "androidx.compose.ui:ui:$compose_version"
@@ -65,29 +88,50 @@ dependencies {
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation 'androidx.activity:activity-compose:1.4.0'
     implementation "androidx.navigation:navigation-compose:2.5.0-alpha02"
+    //last added
+    implementation "androidx.compose.runtime:runtime:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+        // compose insets
+    implementation "com.google.accompanist:accompanist-insets:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
 
-    // Dagger Core
-    implementation "com.google.dagger:dagger:$hilt_version"
-    implementation 'androidx.navigation:navigation-runtime-ktx:2.4.1'
-    kapt "com.google.dagger:dagger-compiler:$hilt_version"
+//    //last added
+//    implementation "androidx.compose.foundation:foundation:$compose_version"
+//    implementation "androidx.compose.foundation:foundation-layout:$compose_version"
+//    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0"
 
-    // Dagger Android
-    api "com.google.dagger:dagger-android:$hilt_version"
-    api "com.google.dagger:dagger-android-support:$hilt_version"
-    kapt "com.google.dagger:dagger-android-processor:$hilt_version"
+
+
+
+    // room libraries
+    implementation "androidx.room:room-common:$room_version"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     //Hilt libraries
-    implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+    implementation "com.google.dagger:hilt-android:$hilt_core_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_core_version"
+    //need to remove
+    kapt "androidx.hilt:hilt-compiler:$hilt_version"
+    implementation "androidx.hilt:hilt-navigation-compose:$hiltComposeNavigation_version"
 
     //retrofit
     implementation "com.squareup.retrofit2:converter-moshi:$retrofit_version"
-    implementation "com.squareup.moshi:moshi:$moshi_version"
-    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi_version"
+    implementation "com.github.skydoves:sandwich:$sandwich_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okHttpInterceptor_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
-    // Image loading
-    implementation "io.coil-kt:coil-compose:$coil_version"
+    // image loading
+    implementation "com.github.skydoves:landscapist-coil:$coil_version"
+
+    // whatIf
+    implementation "com.github.skydoves:whatif:$what_if_version"
+
+    //need to remove
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
 
     //test
     testImplementation 'junit:junit:4.13.2'
@@ -101,6 +145,6 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.1.0"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
-    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
-    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    androidTestImplementation "com.google.dagger:hilt-android-testing:$hilt_core_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_core_version"
 }

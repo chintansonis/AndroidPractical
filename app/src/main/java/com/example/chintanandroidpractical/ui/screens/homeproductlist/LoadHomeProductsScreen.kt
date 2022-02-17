@@ -1,18 +1,18 @@
 package com.example.chintanandroidpractical.ui.screens.homeproductlist
 
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -24,17 +24,38 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.chintanandroidpractical.R
+import com.example.chintanandroidpractical.models.NetworkState
+import com.example.chintanandroidpractical.models.entities.Summary
+import com.example.chintanandroidpractical.models.onLoading
+import com.example.chintanandroidpractical.models.onSuccess
+import com.example.chintanandroidpractical.ui.LoadingProgressBarScreen
+import com.example.chintanandroidpractical.utils.paging
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LoadHomeProductsScreen() {
+fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: LazyListState) {
+    val networkState: NetworkState by viewModel.productLoadingState
+    val products by viewModel.productsList
     Surface(color = colorResource(id = R.color.light_gray), modifier = Modifier.fillMaxSize()) {
-        LazyVerticalGrid(
-            cells = GridCells.Adaptive(minSize = 140.dp), contentPadding = PaddingValues(4.dp)
-        ) {
-            items(10) {
-                ProductItemGrid()
+        networkState.onSuccess {
+            LazyVerticalGrid(
+                cells = GridCells.Fixed(2),
+                state = lazyListState,
+                contentPadding = PaddingValues(4.dp)
+            ) {
+                itemsIndexed(products) { index, destination ->
+                    Log.d("System out","it.id "+destination.id)
+                    ProductItemGrid(
+                        product = destination
+                    )
+                }
+            }
+        }
+        networkState.onLoading {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                LoadingProgressBarScreen()
             }
         }
     }
@@ -44,7 +65,7 @@ fun LoadHomeProductsScreen() {
 item view for product list
  */
 @Composable
-fun ProductItemGrid() {
+fun ProductItemGrid(product: Summary) {
     Card(
         shape = RoundedCornerShape(8.dp),
         backgroundColor = MaterialTheme.colors.surface,
@@ -70,7 +91,7 @@ fun ProductItemGrid() {
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = "Cape-effect intarsia wool-blend midi dress",
+                text = product.name,
                 color = Color.Black,
                 fontSize = 14.sp,
                 modifier = Modifier.padding(
@@ -79,7 +100,7 @@ fun ProductItemGrid() {
                 )
             )
             Text(
-                text = "£ 90",
+                text = product.price.amount.toString(),
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
