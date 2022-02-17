@@ -8,6 +8,13 @@ enum class NetworkState {
   ERROR,
   SUCCESS
 }
+@Composable
+fun NetworkState.onError(block: @Composable () -> Unit): NetworkState {
+  if (this == NetworkState.ERROR) {
+    block()
+  }
+  return this
+}
 
 @Composable
 fun NetworkState.onSuccess(block: @Composable () -> Unit): NetworkState {

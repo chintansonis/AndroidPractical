@@ -2,6 +2,7 @@ package com.example.chintanandroidpractical.di
 
 import com.example.chintanandroidpractical.database.SummaryDao
 import com.example.chintanandroidpractical.network.service.ProductService
+import com.example.chintanandroidpractical.repository.LocalDataSourceRepository
 import com.example.chintanandroidpractical.repository.ProductSummaryRepository
 import dagger.Module
 import dagger.Provides
@@ -13,13 +14,21 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object RepositoryModule {
 
-  @Provides
-  @ViewModelScoped
-  fun provideProductSummaryRepository(
-    productService: ProductService,
-    summaryDao: SummaryDao
-  ): ProductSummaryRepository {
-    return ProductSummaryRepository(productService, summaryDao)
-  }
+    @Provides
+    @ViewModelScoped
+    fun provideProductSummaryRepository(
+        productService: ProductService,
+        summaryDao: SummaryDao
+    ): ProductSummaryRepository {
+        return ProductSummaryRepository(productService, summaryDao)
+    }
+
+    @Provides
+    @ViewModelScoped
+    fun provideLocalDataSourceRepository(
+        summaryDao: SummaryDao
+    ): LocalDataSourceRepository {
+        return LocalDataSourceRepository(summaryDao)
+    }
 
 }

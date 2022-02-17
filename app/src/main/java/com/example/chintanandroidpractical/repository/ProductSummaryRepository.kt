@@ -25,15 +25,10 @@ class ProductSummaryRepository constructor(
     @WorkerThread
     fun loadProductList(limit: Int, success: () -> Unit, error: () -> Unit) = flow {
         var products = summaryDao.getSummaryList()
-        //var products = summaryDao.getSummaryList(limit)
         if (products.isEmpty()) {
             val response = productService.fetchProducts(AppConstants.PAGING_SIZE,limit)
             response.suspendOnSuccess {
                 products = data.summaries
-//                products.forEach {
-//                    it.limit = limit
-//                    Log.d("System out", "productPageStateFlow.value limit $limit")
-//                }
                 summaryDao.insertSummaryList(products)
                 emit(products)
             }.onError {
@@ -43,4 +38,6 @@ class ProductSummaryRepository constructor(
             emit(products)
         }
     }.onCompletion { success() }.flowOn(Dispatchers.IO)
+
+
 }

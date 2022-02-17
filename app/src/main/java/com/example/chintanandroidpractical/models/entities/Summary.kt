@@ -9,12 +9,12 @@ import com.example.chintanandroidpractical.models.networkmodels.Price
 @Immutable
 @Entity(primaryKeys = [("id")])
 data class Summary(
-    //var limit: Int,
     val analyticsKey: String,
     val badges: List<String>,
     val brandId: Int,
     val colourIds: List<Int>,
     val id: Int,
+    val isFavouriteAdded: Boolean,
     val images: Images,
     val leafCategoryIds: List<Int>,
     val name: String,

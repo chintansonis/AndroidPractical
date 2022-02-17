@@ -1,10 +1,7 @@
 package com.example.chintanandroidpractical.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
+import com.example.chintanandroidpractical.models.entities.FavouriteSummary
 import com.example.chintanandroidpractical.models.entities.Summary
 
 @Dao
@@ -13,7 +10,17 @@ interface SummaryDao {
   suspend fun insertSummaryList(movies: List<Summary>)
 
   @Query("SELECT * FROM Summary")
-  //@Query("SELECT * FROM Summary WHERE `limit` = :limit_")
   suspend fun getSummaryList(): List<Summary>
-  //suspend fun getSummaryList(limit_: Int): List<Summary>
+
+
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  suspend fun insertFavouriteSummary(favouriteSummary: FavouriteSummary)
+
+  @Delete
+  suspend fun deleteFavoriteSummary(favouriteSummary: FavouriteSummary)
+
+  @Query("SELECT * FROM favorite_table")
+   fun getFavouriteList(): List<FavouriteSummary>
+
+
 }
