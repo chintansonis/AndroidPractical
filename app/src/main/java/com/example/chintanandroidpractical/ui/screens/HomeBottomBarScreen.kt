@@ -25,11 +25,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.chintanandroidpractical.R
 import com.example.chintanandroidpractical.ui.HomeBottomBarStateHolder
 import com.example.chintanandroidpractical.ui.screens.favouriteproductlist.LoadFavouritesProductsScreen
-import com.example.chintanandroidpractical.ui.screens.homeproductlist.LoadHomeProductViewModel
 import com.example.chintanandroidpractical.ui.screens.homeproductlist.LoadHomeProductsScreen
 import com.example.chintanandroidpractical.utils.NavigationItem
 
-
+// this screen is for managing 2 tabs
 @Composable
 fun NavigateToHomeBottomBarScreen() {
     val navController = rememberNavController()
@@ -44,7 +43,7 @@ fun NavigateToHomeBottomBarScreen() {
     }
 }
 
-
+// app bar
 @Composable
 fun TopBar() {
     TopAppBar(title = { Text(text = stringResource(R.string.app_name), fontSize = 18.sp) },
@@ -59,6 +58,7 @@ fun TopBar() {
         })
 }
 
+// added static button
 @Composable
 fun AddFloatingButton() {
     FloatingActionButton(onClick = {
@@ -82,7 +82,7 @@ fun SetUpNavigation(navController: NavHostController) {
             LoadHomeProductsScreen(hiltViewModel(),tabStateHolder.productLazyListState )
         }
         composable(NavigationItem.BottomFavouriteProductList.route) {
-            LoadFavouritesProductsScreen()
+            LoadFavouritesProductsScreen(hiltViewModel(),tabStateHolder.favouriteListState)
         }
     }
 }
@@ -147,10 +147,10 @@ fun TopBarPreview() {
     TopBar()
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun MainScreenPreview() {
-//    NavigateToHomeBottomBarScreen()
-//}
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+    NavigateToHomeBottomBarScreen()
+}
 
 

@@ -1,6 +1,6 @@
 package com.example.chintanandroidpractical.ui.screens.homeproductlist
 
-import android.util.Log
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyListState
@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,12 +31,16 @@ import com.example.chintanandroidpractical.network.compose.NetworkImage
 import com.example.chintanandroidpractical.ui.LoadEmptyView
 import com.example.chintanandroidpractical.ui.LoadingProgressBarScreen
 import com.example.chintanandroidpractical.utils.AppConstants
+import com.example.chintanandroidpractical.utils.Extensions.returnPrice
 
 
 @Composable
 fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: LazyListState) {
+    // data holder from viewmodel
     val networkState: NetworkState by viewModel.productLoadingState
     val products by viewModel.productsList
+
+    // background of screen
     Surface(color = colorResource(id = R.color.light_gray), modifier = Modifier.fillMaxSize()) {
         networkState.onSuccess {
             LazyVerticalGrid(
@@ -43,29 +48,30 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
                 state = lazyListState,
                 contentPadding = PaddingValues(4.dp)
             ) {
+                // products displayed by sorting name
                 itemsIndexed(products.sortedBy { it.name }) { _, product ->
-                    Log.d("System out", "it.id " + product.id)
+                    // inflating item of lazyvertical Grid which is subsitition of recyclerview
                     Card(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(dimensionResource(id = R.dimen.padding_8dp)),
                         backgroundColor = MaterialTheme.colors.surface,
                         elevation = 4.dp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(500.dp)
+                            .height(dimensionResource(id = R.dimen.padding_480dp))
                             .padding(dimensionResource(id = R.dimen.padding_6dp))
-                        //.clickable { onItemClicked(item.id) }
                     ) {
                         ConstraintLayout {
-                            val (image, title, price, favourtieIcon) = createRefs()
-                            var favourtieIconLiked by remember {
+                            //references of views
+                            val (image, title, price, favouriteIcon) = createRefs()
+                            // preserve the click state of favourites
+                            var favouriteIconLiked by remember {
                                 mutableStateOf(product.isFavouriteAdded)
                             }
-                            var lines by remember { mutableStateOf(0) }
                             NetworkImage(
                                 networkUrl = AppConstants.getImagePath(product = product),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(320.dp)
+                                    .height(dimensionResource(id = R.dimen.padding_320dp))
                                     .constrainAs(image) {
                                         top.linkTo(parent.top)
                                     },
@@ -80,15 +86,11 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .alpha(0.85f)
-                                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_8dp), vertical = dimensionResource(id = R.dimen.padding_8dp))
                                     .constrainAs(title) {
                                         top.linkTo(image.bottom)
-                                    },
-                                onTextLayout = { res -> lines = res.lineCount })
-                            for (i in lines..2) {
-                                Text(" ", style = MaterialTheme.typography.h2)
-                            }
-                            Text(text = product.price.amount.toString(),
+                                    })
+                            Text(text = stringResource(id = R.string.currency) + returnPrice(product.price).toString(),
                                 style = MaterialTheme.typography.body2,
                                 textAlign = TextAlign.Left,
                                 color = Color.Black,
@@ -96,20 +98,42 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .alpha(0.85f)
-                                    .padding(horizontal = 8.dp)
+                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_8dp))
                                     .constrainAs(price) {
-                                        top.linkTo(title.bottom)
+                                        bottom.linkTo(price.bottom)
                                     })
+                            // fav icons click management
                             IconButton(onClick = {
-                                val favoriteEntity = FavouriteSummary(0, product)
-                                viewModel.insertFavoriteSummary(favoriteEntity)
-                                favourtieIconLiked = !favourtieIconLiked
-                            }, modifier = Modifier.constrainAs(favourtieIcon) {
+                                /**
+                                 * updating product in main summary db table for preserving values for favourites, using it we can repopulate favourite items in main product list
+                                 */
+                                viewModel.updateFavoriteDataInSummaryTable(product)
+
+                                // update existing field for UI
+                                favouriteIconLiked = !favouriteIconLiked
+
+                                /**
+                                 * based on user added product as favorite, we insert or delete items from favorite table. it would reflect in favoriteList as well
+                                 */
+                                val favoriteEntity = FavouriteSummary(product.id, product)
+                                if (favouriteIconLiked) {
+                                    viewModel.insertFavoriteSummary(favoriteEntity)
+                                } else {
+                                    viewModel.deleteFavoriteSummary(favoriteEntity)
+                                }
+
+                                /**
+                                 * updating existing object value in UI to preserve it on scroll
+                                 */
+                                product.isFavouriteAdded = favouriteIconLiked
+
+                            }, modifier = Modifier.constrainAs(favouriteIcon) {
                                 top.linkTo(price.bottom)
+                                bottom.linkTo(parent.bottom)
                             }) {
                                 Icon(
                                     painter = painterResource(
-                                        id = if (favourtieIconLiked)
+                                        id = if (favouriteIconLiked)
                                             R.drawable.ic_baseline_favorite_24 else R.drawable.ic_baseline_favorite_border_24
                                     ), ""
                                 )
@@ -120,6 +144,8 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
             }
         }
     }
+
+    // show Loading screen on loading data
     networkState.onLoading {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -127,6 +153,8 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
             LoadingProgressBarScreen()
         }
     }
+
+    // show Error screen on loading data
     networkState.onError {
         Box(
             modifier = Modifier.fillMaxSize()
@@ -135,4 +163,6 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
         }
     }
 }
+
+
 

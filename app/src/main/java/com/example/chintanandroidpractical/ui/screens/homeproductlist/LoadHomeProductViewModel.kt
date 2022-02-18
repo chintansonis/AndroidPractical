@@ -1,5 +1,6 @@
 package com.example.chintanandroidpractical.ui.screens.homeproductlist
 
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -11,20 +12,18 @@ import com.example.chintanandroidpractical.models.entities.FavouriteSummary
 import com.example.chintanandroidpractical.models.entities.Summary
 import com.example.chintanandroidpractical.repository.LocalDataSourceRepository
 import com.example.chintanandroidpractical.repository.ProductSummaryRepository
-import com.example.chintanandroidpractical.utils.NavigationItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoadHomeProductViewModel @Inject constructor(
-    val imageLoader: ImageLoader, private val productSummaryRepository: ProductSummaryRepository,private val localDataSourceRepository: LocalDataSourceRepository) : ViewModel() {
+    val imageLoader: ImageLoader,
+    private val productSummaryRepository: ProductSummaryRepository,
+    private val localDataSourceRepository: LocalDataSourceRepository
+) : ViewModel() {
 
 
     val _productLoadingState: MutableState<NetworkState> = mutableStateOf(NetworkState.IDLE)
@@ -35,25 +34,55 @@ class LoadHomeProductViewModel @Inject constructor(
     val productPageStateFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
 
-    private val newProductFlow = productPageStateFlow.flatMapLatest {
+     val newProductFlow = productPageStateFlow.flatMapLatest {
         _productLoadingState.value = NetworkState.LOADING
         productSummaryRepository.loadProductList(limit = it,
             success = { _productLoadingState.value = NetworkState.SUCCESS },
             error = { _productLoadingState.value = NetworkState.ERROR })
-    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
+    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(1000L), replay = 10)
+
+//    fun loadTaskList(): Flow<Summary> = flow {
+//        _productLoadingState.value = NetworkState.LOADING
+//        val ty=productSummaryRepository.loadProductList(limit = 0,
+//            success = { _productLoadingState.value = NetworkState.SUCCESS },
+//            error = { _productLoadingState.value = NetworkState.ERROR })
+//            emit(ty)
+//        }
+//    }
 
 
     init {
+        Log.d("System out","Dispatchers.IO")
         viewModelScope.launch(Dispatchers.IO) {
             newProductFlow.collectLatest {
                 productsList.value.addAll(it)
             }
         }
     }
+
+    /**
+     * insert the favourite item in FavouriteSummary table
+     */
     fun insertFavoriteSummary(favouriteSummary: FavouriteSummary) =
         viewModelScope.launch(Dispatchers.IO) {
             localDataSourceRepository.insertFavoriteSummary(favouriteSummary)
         }
 
+    /**
+     * delete the favourite item in FavouriteSummary table
+     */
+    fun deleteFavoriteSummary(favouriteSummary: FavouriteSummary) =
+        viewModelScope.launch(Dispatchers.IO) {
+            localDataSourceRepository.deleteFavoriteSummary(favouriteSummary)
+        }
+
+    /*
+    * update isFavourite value to summary table to reflect the main UI
+     */
+    fun updateFavoriteDataInSummaryTable(summary: Summary) = viewModelScope.launch(Dispatchers.IO) {
+        val summaryObject = localDataSourceRepository.getSummaryObject(summary.id)
+        summaryObject.isFavouriteAdded = !summaryObject.isFavouriteAdded
+        localDataSourceRepository.updateSummaryObject(summaryObject)
+    }
 
 }

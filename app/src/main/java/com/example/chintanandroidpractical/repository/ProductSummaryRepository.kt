@@ -1,6 +1,6 @@
 package com.example.chintanandroidpractical.repository
 
-import android.util.Log
+
 import androidx.annotation.WorkerThread
 import com.example.chintanandroidpractical.database.SummaryDao
 import com.example.chintanandroidpractical.network.service.ProductService
@@ -18,17 +18,18 @@ class ProductSummaryRepository constructor(
     private val productService: ProductService, private val summaryDao: SummaryDao
 ) : Repository {
 
-    init {
-        Log.d("Injected repository", "Injection ProductSummaryRepository")
-    }
 
+    // load products. methods using sandwhich library for lighter and smartly managing request response
     @WorkerThread
     fun loadProductList(limit: Int, success: () -> Unit, error: () -> Unit) = flow {
+        // fetching products from DB
         var products = summaryDao.getSummaryList()
+
         if (products.isEmpty()) {
-            val response = productService.fetchProducts(AppConstants.PAGING_SIZE,limit)
+            val response = productService.fetchProducts(AppConstants.PAGING_SIZE, limit)
             response.suspendOnSuccess {
                 products = data.summaries
+                // inserting new data into db
                 summaryDao.insertSummaryList(products)
                 emit(products)
             }.onError {

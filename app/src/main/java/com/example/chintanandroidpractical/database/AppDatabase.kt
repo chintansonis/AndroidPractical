@@ -10,9 +10,11 @@ import com.example.chintanandroidpractical.models.entities.FavouriteSummary
 @Database(
     entities = [(Summary::class),(FavouriteSummary::class)], version = 2, exportSchema = false
 )
+// type converters for room db
 @TypeConverters(
     value = [(StringListConverter::class),(IntegerListConverter::class),(ImageConverter::class),(PriceConverter::class),(SummaryConverter::class)]
 )
+// instance of appdb
 abstract class AppDatabase : RoomDatabase() {
     abstract fun summaryDao(): SummaryDao
 }

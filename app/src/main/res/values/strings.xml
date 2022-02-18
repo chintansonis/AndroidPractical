@@ -6,4 +6,7 @@
     <string name="no_favourites_found">No favourites added!!</string>
     <string name="dummy_product">Dummy product</string>
     <string name="msg_under_developement">This feature is static currently.</string>
+    <string name="currency">£ </string>
+    <string name="image_failed">image request failed.</string>
+    <string name="launch_favourites">test</string>
 </resources>

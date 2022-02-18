@@ -7,5 +7,7 @@ import androidx.compose.runtime.Immutable
 data class Price(
     val amount: Int,
     val currency: String,
-    val divisor: Int
+    val divisor: Int,
+    val discountPercent: Int=0,
+    val originalAmount: Int
 )

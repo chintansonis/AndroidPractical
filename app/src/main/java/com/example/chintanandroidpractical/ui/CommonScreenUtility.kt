@@ -21,6 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.chintanandroidpractical.R
 
+
+// load empty view
 @Composable
 fun LoadEmptyView(@StringRes emptyViewMessage: Int) {
     Surface(color = colorResource(id = R.color.light_gray), modifier = Modifier.fillMaxSize()) {
@@ -45,6 +47,7 @@ fun LoadEmptyView(@StringRes emptyViewMessage: Int) {
     }
 }
 
+//load progressbar screen
 @Composable
 fun LoadingProgressBarScreen() {
     Box(

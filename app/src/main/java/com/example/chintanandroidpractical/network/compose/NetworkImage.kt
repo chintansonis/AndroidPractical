@@ -6,9 +6,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.example.chintanandroidpractical.R
 import com.example.chintanandroidpractical.ui.theme.shimmerHighLight
 import com.skydoves.landscapist.CircularReveal
 import com.skydoves.landscapist.ShimmerParams
@@ -63,7 +65,7 @@ fun NetworkImage(
       shimmerParams = shimmerParams,
       failure = {
         Text(
-          text = "image request failed.",
+          text = stringResource(R.string.image_failed),
           textAlign = TextAlign.Center,
           style = MaterialTheme.typography.body2,
           modifier = Modifier.fillMaxSize()

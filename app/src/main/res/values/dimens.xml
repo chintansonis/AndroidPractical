@@ -4,10 +4,12 @@
     <dimen name="padding_16dp">16dp</dimen>
     <dimen name="padding_1dp">1dp</dimen>
     <dimen name="padding_6dp">6dp</dimen>
+    <dimen name="padding_480dp">480dp</dimen>
     <dimen name="padding_8dp">8dp</dimen>
     <dimen name="padding_4dp">4dp</dimen>
     <dimen name="padding_10dp">10dp</dimen>
     <dimen name="padding_45dp">45dp</dimen>
+    <dimen name="padding_320dp">320dp</dimen>
 
 
     ********************************Text size******************

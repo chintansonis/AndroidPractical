@@ -1,11 +1,11 @@
 package com.example.chintanandroidpractical.models.entities
 
 import androidx.compose.runtime.Immutable
-import androidx.room.Embedded
 import androidx.room.Entity
 import com.example.chintanandroidpractical.models.networkmodels.Images
 import com.example.chintanandroidpractical.models.networkmodels.Price
 
+// Summary table is used for storing main exploring products
 @Immutable
 @Entity(primaryKeys = [("id")])
 data class Summary(
@@ -14,7 +14,8 @@ data class Summary(
     val brandId: Int,
     val colourIds: List<Int>,
     val id: Int,
-    val isFavouriteAdded: Boolean,
+    // this variable is keep track whether user selected fav item or not
+    var isFavouriteAdded: Boolean,
     val images: Images,
     val leafCategoryIds: List<Int>,
     val name: String,

@@ -12,11 +12,11 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
+// dependency for network instance throughout appp
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
@@ -24,14 +24,17 @@ object NetworkModule {
   @Provides
   @Singleton
   fun provideOkHttpClient(): OkHttpClient {
-    val logging = HttpLoggingInterceptor()
-    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+//    val logging = HttpLoggingInterceptor()
+//    logging.setLevel(HttpLoggingInterceptor.Level.BODY)
+
     return OkHttpClient.Builder()
       .addInterceptor(RequestInterceptor())
-      .addInterceptor(logging)
+      // enable this line and intercaptor library for loggin
+      //.addInterceptor(logging)
       .build()
   }
 
+  // provide single instance of imageloader
   @Provides
   @Singleton
   fun provideImageLoader(
@@ -43,6 +46,7 @@ object NetworkModule {
       .build()
   }
 
+  // provide single instance of retrofit
   @Provides
   @Singleton
   fun provideRetrofit(okhHttpClient: OkHttpClient): Retrofit {
@@ -55,7 +59,7 @@ object NetworkModule {
   }
 
 
-
+  // provide single instance of product api service
   @Provides
   @Singleton
   fun provideProductService(retrofit: Retrofit): ProductService {

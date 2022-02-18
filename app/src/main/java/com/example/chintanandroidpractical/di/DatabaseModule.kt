@@ -12,10 +12,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+// dependency for dbmodule throughout appp
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    // provide single shared appdb instance
     @Provides
     @Singleton
     fun provideRoomDataBase(@ApplicationContext context: Context): AppDatabase {
@@ -23,6 +25,7 @@ object DatabaseModule {
             .allowMainThreadQueries().build()
     }
 
+    // provide single shared summaryDao
     @Provides
     @Singleton
     fun provideSummaryDao(appDatabase: AppDatabase): SummaryDao {

@@ -1,16 +1,13 @@
 package com.example.chintanandroidpractical.models.entities
 
 import androidx.compose.runtime.Immutable
-import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.example.chintanandroidpractical.models.networkmodels.Images
-import com.example.chintanandroidpractical.models.networkmodels.Price
 
+
+// FavouriteSummary table is used for storing favourite items
 @Immutable
-@Entity(tableName = "favorite_table")
+@Entity(primaryKeys = [("id")])
 data class FavouriteSummary(
-    @PrimaryKey(autoGenerate = true)
     val id: Int,
-    var favouriteSummary: Summary
+    var summary: Summary
 )
