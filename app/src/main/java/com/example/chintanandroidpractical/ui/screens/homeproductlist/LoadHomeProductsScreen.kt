@@ -1,6 +1,4 @@
 package com.example.chintanandroidpractical.ui.screens.homeproductlist
-
-
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyListState

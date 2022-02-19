@@ -1,6 +1,6 @@
 package com.example.chintanandroidpractical.ui.screens.homeproductlist
 
-import android.util.Log
+
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -34,25 +34,18 @@ class LoadHomeProductViewModel @Inject constructor(
     val productPageStateFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
 
+    // fetching data from webservice and manage it to db
      val newProductFlow = productPageStateFlow.flatMapLatest {
         _productLoadingState.value = NetworkState.LOADING
         productSummaryRepository.loadProductList(limit = it,
             success = { _productLoadingState.value = NetworkState.SUCCESS },
             error = { _productLoadingState.value = NetworkState.ERROR })
-    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(1000L), replay = 10)
-
-//    fun loadTaskList(): Flow<Summary> = flow {
-//        _productLoadingState.value = NetworkState.LOADING
-//        val ty=productSummaryRepository.loadProductList(limit = 0,
-//            success = { _productLoadingState.value = NetworkState.SUCCESS },
-//            error = { _productLoadingState.value = NetworkState.ERROR })
-//            emit(ty)
-//        }
-//    }
+    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 5)
 
 
+
+  // adding products
     init {
-        Log.d("System out","Dispatchers.IO")
         viewModelScope.launch(Dispatchers.IO) {
             newProductFlow.collectLatest {
                 productsList.value.addAll(it)

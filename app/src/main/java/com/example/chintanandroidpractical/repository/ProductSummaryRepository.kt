@@ -32,6 +32,7 @@ class ProductSummaryRepository constructor(
                 // inserting new data into db
                 summaryDao.insertSummaryList(products)
                 emit(products)
+                success()
             }.onError {
                 error()
             }.onException { error() }
