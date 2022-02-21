@@ -105,7 +105,6 @@ fun LoadFavouritesProductsScreen(
                                 val favoriteEntity =
                                     FavouriteSummary(favouriteEntity.id, favouriteEntity.summary)
                                 viewModel.deleteFavoriteSummary(favoriteEntity)
-                                viewModel.getFavouriteProducts()
 
                                 viewModel.updateFavoriteDataInSummaryTable(favouriteEntity.summary)
                             }, modifier = Modifier.constrainAs(favouriteIcon) {

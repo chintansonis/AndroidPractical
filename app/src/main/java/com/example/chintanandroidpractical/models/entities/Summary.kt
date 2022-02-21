@@ -15,7 +15,7 @@ data class Summary(
     val colourIds: List<Int>,
     val id: Int,
     // this variable is keep track whether user selected fav item or not
-    var isFavouriteAdded: Boolean,
+    var isFavouriteAdded: Boolean=false,
     val images: Images,
     val leafCategoryIds: List<Int>,
     val name: String,

@@ -35,6 +35,9 @@ class FavouriteProductViewModel @Inject constructor(
      */
     fun deleteFavoriteSummary(favouriteSummary: FavouriteSummary) =
         viewModelScope.launch(Dispatchers.IO) {
+            //removing existing mutablestateFlow
+            _favouriteProductList.value-=favouriteSummary
+            // deleting from db
             localDataSourceRepository.deleteFavoriteSummary(favouriteSummary)
         }
     /*
