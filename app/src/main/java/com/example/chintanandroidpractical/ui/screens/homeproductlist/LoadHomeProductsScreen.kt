@@ -36,7 +36,12 @@ import com.example.chintanandroidpractical.utils.Extensions.returnPrice
 fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: LazyListState) {
     // data holder from viewmodel
     val networkState: NetworkState by viewModel.productLoadingState
-    val products by viewModel.productsList
+    //val products by viewModel.productsList
+    val products by viewModel.productListFlow.collectAsState(listOf())
+
+    LaunchedEffect(key1 = stringResource(R.string.launch_products)) {
+        viewModel.fetchproductList()
+    }
 
     // background of screen
     Surface(color = colorResource(id = R.color.light_gray), modifier = Modifier.fillMaxSize()) {
@@ -44,7 +49,7 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
             LazyVerticalGrid(
                 cells = GridCells.Fixed(2),
                 state = lazyListState,
-                contentPadding = PaddingValues(4.dp)
+                contentPadding = PaddingValues(dimensionResource(id = R.dimen.padding_4dp))
             ) {
                 // products displayed by sorting name
                 itemsIndexed(products.sortedBy { it.name }) { _, product ->
@@ -84,7 +89,10 @@ fun LoadHomeProductsScreen(viewModel: LoadHomeProductViewModel, lazyListState: L
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .alpha(0.85f)
-                                    .padding(horizontal = dimensionResource(id = R.dimen.padding_8dp), vertical = dimensionResource(id = R.dimen.padding_8dp))
+                                    .padding(
+                                        horizontal = dimensionResource(id = R.dimen.padding_8dp),
+                                        vertical = dimensionResource(id = R.dimen.padding_8dp)
+                                    )
                                     .constrainAs(title) {
                                         top.linkTo(image.bottom)
                                     })

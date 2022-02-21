@@ -9,4 +9,5 @@
     <string name="currency">£ </string>
     <string name="image_failed">image request failed.</string>
     <string name="launch_favourites">launch favourites</string>
+    <string name="launch_products">launch_products</string>
 </resources>

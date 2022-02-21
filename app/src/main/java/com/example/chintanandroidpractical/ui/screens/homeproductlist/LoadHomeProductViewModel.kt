@@ -29,29 +29,20 @@ class LoadHomeProductViewModel @Inject constructor(
     val _productLoadingState: MutableState<NetworkState> = mutableStateOf(NetworkState.IDLE)
     val productLoadingState: State<NetworkState> get() = _productLoadingState
 
-
-    val productsList: State<MutableList<Summary>> = mutableStateOf(mutableListOf())
     val productPageStateFlow: MutableStateFlow<Int> = MutableStateFlow(0)
 
 
     // fetching data from webservice and manage it to db
-     val newProductFlow = productPageStateFlow.flatMapLatest {
+    val productListFlow = productPageStateFlow.flatMapLatest {
         _productLoadingState.value = NetworkState.LOADING
         productSummaryRepository.loadProductList(limit = it,
             success = { _productLoadingState.value = NetworkState.SUCCESS },
             error = { _productLoadingState.value = NetworkState.ERROR })
-    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 5)
+    }.shareIn(viewModelScope, SharingStarted.WhileSubscribed(), replay = 1)
 
+    //emitting product list
+    fun fetchproductList() = productPageStateFlow.tryEmit(1)
 
-
-  // adding products
-    init {
-        viewModelScope.launch(Dispatchers.IO) {
-            newProductFlow.collectLatest {
-                productsList.value.addAll(it)
-            }
-        }
-    }
 
     /**
      * insert the favourite item in FavouriteSummary table
@@ -77,5 +68,4 @@ class LoadHomeProductViewModel @Inject constructor(
         summaryObject.isFavouriteAdded = !summaryObject.isFavouriteAdded
         localDataSourceRepository.updateSummaryObject(summaryObject)
     }
-
 }
