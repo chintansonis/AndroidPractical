@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -33,9 +31,7 @@ import com.example.chintanandroidpractical.utils.NavigationItem
 fun NavigateToHomeBottomBarScreen() {
     val navController = rememberNavController()
 
-    Scaffold(topBar = { TopBar() }, floatingActionButton = {
-        AddFloatingButton()
-    }, bottomBar = { BottomNavigationBar(navController) }) { innerPadding ->
+    Scaffold(topBar = { TopBar() }, bottomBar = { BottomNavigationBar(navController) }) { innerPadding ->
         // Apply the padding globally to the whole BottomNavScreensController
         Box(modifier = Modifier.padding(innerPadding)) {
             SetUpNavigation(navController = navController)
@@ -48,25 +44,9 @@ fun NavigateToHomeBottomBarScreen() {
 fun TopBar() {
     TopAppBar(title = { Text(text = stringResource(R.string.app_name), fontSize = 18.sp) },
         backgroundColor = colorResource(id = R.color.white),
-        contentColor = Color.Black,
-        navigationIcon = {
-            IconButton(onClick = {
-
-            }) {
-                Icon(Icons.Filled.Menu, "", tint = Color.Black)
-            }
-        })
+        contentColor = Color.Black)
 }
 
-// added static button
-@Composable
-fun AddFloatingButton() {
-    FloatingActionButton(onClick = {
-
-    }, backgroundColor = colorResource(id = R.color.orange), content = {
-        Icon(painterResource(id = R.drawable.ic_sale), "")
-    })
-}
 
 /*
 setup navigation for 2 bottom tabs
